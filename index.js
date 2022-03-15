@@ -3,8 +3,23 @@ const app = express();
 const path = require("path");
 const mongoose = require("mongoose");
 const methodOverride = require("method-override");
+const session = require("express-session");
+const flash = require("connect-flash");
 
 const Product = require("./models/product");
+
+// ****************
+// SESSION & FLASH
+// ****************
+// Sessions are a server-side data store that we use to make HTTP stateful. Instead of storing data using cookies, we store the data on the server side and then send the browser a cookie that can bE used to retrieve the data.
+const sessionOptions = {
+  secret: "imasecret",
+  resave: false, // used to avoid deprecated warning
+  saveUninitialized: false, // used to avoid deprecated warning
+};
+app.use(session(sessionOptions));
+// with the `flash` middleware in place, all requests will have a `req.flash()` function that can be used for flash messages.
+app.use(flash());
 
 // ***********************
 // INTEGRATE MONGO WITH JS
@@ -64,6 +79,8 @@ app.get("/products/new", (req, res) => {
 app.post("/products", async (req, res) => {
   const newProduct = new Product(req.body);
   await newProduct.save();
+  // set a flash message by passing the key, followed by the value
+  req.flash("success", "Successfully created a new product!");
   res.redirect(`/products/${newProduct._id}`);
 });
 
@@ -71,7 +88,8 @@ app.post("/products", async (req, res) => {
 app.get("/products/:id", async (req, res) => {
   const { id } = req.params;
   const product = await Product.findById(id);
-  res.render("products/show", { product });
+  // get an array of flash message by passing the key to `req.flash`
+  res.render("products/show", { product, message: req.flash("success") });
 });
 
 // ========== Edit a Product ==========
