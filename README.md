@@ -6,6 +6,10 @@ This project integrates **Mongoose** with **Express** to create a **Mongo** data
 
 ![app demo](Assets/products.gif)
 
+*New update added a flash message feature: when a product is successfully created, a flash message will pop up on the top to indicate the success.*
+
+![app demo](Assets/flash-message.png)
+
 
 ## ✨ What I Have Learned
 
